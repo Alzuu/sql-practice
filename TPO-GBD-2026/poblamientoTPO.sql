@@ -1,9 +1,14 @@
--- Datos de prueba para la base de datos del zoológico
--- Compatible con PostgreSQL.
--- Ejecutar DESPUÉS de crear las tablas y el DOMAIN.
 -- Orden de inserción: primero las tablas independientes y luego las que tienen FK.
 
-BEGIN;
+-- Cantidad de tuplas incluidas:
+-- Especie: 10
+-- Animal: 50
+-- Habitat: 10
+-- Personal: 24
+-- Veterinario: 8
+-- Vive: 50
+-- Atiende: 120
+
 INSERT INTO Especie (idEspecie, nombre, descripcion) VALUES
 (1, 'León', 'Mamífero carnívoro'),
 (2, 'Tigre', 'Felino de gran tamaño'),
@@ -283,13 +288,3 @@ INSERT INTO Atiende (tipoDocPersonal, nroDocPersonal, idAnimal, fechaAtencion, m
 ('DNI', '30000411', 27, DATE '2023-05-02', 'Seguimiento veterinario'),
 ('DNI', '30001370', 38, DATE '2023-05-15', 'Control odontológico'),
 ('DNI', '30002329', 49, DATE '2023-05-28', 'Revisión postoperatoria');
-COMMIT;
-
--- Cantidad de tuplas incluidas:
--- Especie: 10
--- Animal: 50
--- Habitat: 10
--- Personal: 24
--- Veterinario: 8
--- Vive: 50
--- Atiende: 120

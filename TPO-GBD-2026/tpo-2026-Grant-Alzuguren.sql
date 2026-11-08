@@ -62,7 +62,7 @@ ON DELETE CASCADE,
 FOREIGN KEY(idhabitat) REFERENCES Habitat(idhabitat)
 ON UPDATE CASCADE
 ON DELETE RESTRICT
-)
+);
 
 CREATE TABLE Atiende(
 tipoDocPersonal VARCHAR(20),
