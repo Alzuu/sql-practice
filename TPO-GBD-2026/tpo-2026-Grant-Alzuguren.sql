@@ -80,7 +80,6 @@ ON UPDATE CASCADE
 ON DELETE RESTRICT
 );
 
-
 -- CREAR LOS ROLES (ejercicio 1a).
 
 CREATE ROLE rol1 WITH LOGIN;
@@ -90,15 +89,50 @@ CREATE ROLE rol3 WITH LOGIN CREATEROLE CREATEDB;
 -- CREAR USUARIOS (ejercicio 1b).
 
 -- REQUISITOS PREVIOS.
+-- Vista para ver info. de animales para el usuario lecturaAnimales.
 CREATE VIEW animales1 AS 
-SELECT a.nombre, a.fechaNacimiento, e.nombre
+SELECT a.nombre, a.fechaNacimiento, e.nombre AS especie
 FROM ANIMAL a NATURAL JOIN ESPECIE e;
 
+-- Vista para ver claves de 3 tablas para el usuario 
+CREATE VIEW pkYfk_tablas AS
+SELECT v.idanimal, v.idHabitat, a.idEspecie, ati.tipoDocPersonal, ati.nroDocPersonal, ati.fechaAtencion
+FROM ANIMAL A
+NATURAL JOIN VIVE v
+NATURAL JOIN ATIENDE ati;
+
 -- USUARIO QUE SOLO PUEDE LEER SOLO UN SUBCONJUNTO DE ATRIBUTOS DE UNA TABLA (1bi)
-CREATE USER soloLecturaParcial WITH PASSWORD '123';
-GRANT SELECT ON animales1 TO soloLecturaParcial;
+CREATE USER lecturaAnimales WITH PASSWORD '123';
+GRANT USAGE ON SCHEMA public TO lecturaAnimales;
+GRANT CONNECT ON DATABASE "BD-TPO-2026-Alzuguren" TO lecturaAnimales;
+GRANT SELECT ON animales1 TO lecturaAnimales;
 
 -- DOS USUARIOS QUE PERTENECEN A UNO DE LOS ROLES DEL ESQUEMA.
-CREATE USER usuarioDeRol1 WITH PASSWORD '123';
+CREATE USER userRol1 WITH PASSWORD '123';
+GRANT rol1 TO userRol1; 
+CREATE USER userRol2 WITH PASSWORD '123';
+GRANT rol2 TO userRol2;
 
-CREATE USER usuarioDeRol2 WITH PASSWORD '123';
+-- USUARIO QUE PUEDE INSERTAR EN DOS TABLAS.
+CREATE USER registroAnimales WITH PASSWORD '123';
+GRANT CONNECT ON DATABASE "BD-TPO-2026-Alzuguren" TO registroAnimales;
+GRANT USAGE ON SCHEMA public TO registroAnimales;
+
+GRANT INSERT ON ANIMAL TO registroAnimales;
+GRANT INSERT ON VIVE TO registroAnimales;
+
+-- USUARIO CON TODOS LOS PRIVILEGIOS.
+CREATE USER admin WITH PASSWORD 'admin123';
+GRANT ALL PRIVILEGES ON DATABASE "BD-TPO-2026-Alzuguren" TO admin;
+GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO admin;
+
+-- USUARIO QUE PUEDA HACER CONSULTAS A CLAVE FORANEA Y/O PRIMARIA DE 3 TABLAS (Uso una vista).
+CREATE USER veterinarioInfo WITH PASSWORD 'vet123';
+GRANT CONNECT ON DATABASE "BD-TPO-2026-Alzuguren" TO veterinarioInfo;
+GRANT USAGE ON SCHEMA public TO veterinarioInfo;
+GRANT SELECT (idAnimal, idHabitat) ON VIVE TO veterinarioInfo;
+GRANT SELECT (idAnimal, idEspecie) ON ANIMAL TO veterinarioInfo;
+GRANT SELECT (tipoDocPersonal, nroDocPersonal, idAnimal, fechaAtencion) ON ATIENDE TO veterinarioInfo;
